@@ -8,6 +8,10 @@ function love.load()
   game = Game:new()
 end
 
+function love.keypressed(key)
+  game:keypressed(key)
+end
+
 function love.update(dt)
   game:update()
 end

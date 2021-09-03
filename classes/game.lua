@@ -7,6 +7,7 @@ local ballHelpers = require('helpers.ball_helpers')
 local fonts = require('fonts')
 
 local ScoreManager = require('classes.score_manager')
+local MainMenu = require('classes.main_menu')
 
 local GameStates = {
   Menu = 1,
@@ -18,6 +19,7 @@ local Game = class('Game')
 
 function Game:initialize()
   self.scoreManager = ScoreManager:new(3)
+  self.mainMenu = MainMenu:new()
   self:reset()
 end
 
@@ -33,9 +35,15 @@ function Game:createPads()
   self.leftPad, self.rightPad = padHelpers.createPads()
 end
 
+function Game:keypressed(key)
+  if self.state == GameStates.Menu then
+    self.mainMenu:keypressed(key)
+  end
+end
+
 function Game:update()
   if self.state == GameStates.Menu then
-    self:updateMenu()
+    -- self:updateMenu()
   elseif self.state == GameStates.InGame then
     self:updateGame()
   else
@@ -53,11 +61,11 @@ function Game:draw()
   end
 end
 
-function Game:updateMenu()
-  if love.keyboard.isDown('return') then
-    self:setState(GameStates.InGame)
-  end
-end
+-- function Game:updateMenu()
+--   if love.keyboard.isDown('return') then
+--     self:setState(GameStates.InGame)
+--   end
+-- end
 
 function Game:updateGame()
   padHelpers.checkPadMovement(self.rightPad, 'up', 'down')
@@ -101,10 +109,11 @@ function Game:updateGameOver()
 end
 
 function Game:drawMenu()
-  love.graphics.setFont(fonts.menuTitleFont)
-  love.graphics.printf('Pong, the Game', 0, config.WINDOW_HEIGHT / 4, config.WINDOW_WIDTH, 'center')
-  love.graphics.setFont(fonts.menuHintFont)
-  love.graphics.printf('Press "Enter" to start', 0, config.WINDOW_WIDTH / 2, config.WINDOW_WIDTH, 'center')
+  self.mainMenu:draw()
+  -- love.graphics.setFont(fonts.menuTitleFont)
+  -- love.graphics.printf('Pong, the Game', 0, config.WINDOW_HEIGHT / 4, config.WINDOW_WIDTH, 'center')
+  -- love.graphics.setFont(fonts.menuHintFont)
+  -- love.graphics.printf('Press "Enter" to start', 0, config.WINDOW_WIDTH / 2, config.WINDOW_WIDTH, 'center')
 end
 
 function Game:drawGame()
